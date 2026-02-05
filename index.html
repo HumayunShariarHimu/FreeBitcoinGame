@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeBitcoinGame</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+ 
+<style>
+    :root {
+        --blood-red: #8b0000;
+        --neon-red: #ff0000;
+        --dark-bg: #050505;
+        --glass-bg: rgba(20, 0, 0, 0.8);
+        --text-color: #e0e0e0;
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        background-image: radial-gradient(circle at center, #1a0000 0%, #000 100%);
+        color: var(--text-color);
+        font-family: 'JetBrains Mono', monospace;
+        display: flex;
+        flex-direction: column; /* Added to keep footer at bottom */
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 400px;
+        background: var(--glass-bg);
+        border: 1px solid var(--blood-red);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 0 30px rgba(139, 0, 0, 0.4), inset 0 0 10px rgba(0,0,0,0.8);
+        backdrop-filter: blur(10px);
+        position: relative;
+        margin: 20px auto; /* Added margin */
+    }
+
+    h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5rem;
+        color: var(--neon-red);
+        text-shadow: 0 0 10px var(--blood-red);
+        margin-bottom: 25px;
+        letter-spacing: 2px;
+        text-align: center;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+        background: rgba(0,0,0,0.5);
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 3px solid var(--neon-red);
+    }
+
+    .stat span {
+        display: block;
+        font-size: 10px;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+
+    .stat b, #double_your_btc_stake {
+        font-size: 14px;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    #double_your_btc_stake {
+        background: transparent;
+        border: none;
+        color: #ff3333;
+        width: 100%;
+        outline: none;
+    }
+
+    .status-box {
+        height: 70px;
+        background: #000;
+        border: 1px solid #300;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .bet-btn {
+        padding: 12px;
+        cursor: pointer;
+        border: 1px solid var(--blood-red);
+        background: rgba(40, 0, 0, 0.3);
+        color: var(--neon-red);
+        border-radius: 5px;
+        transition: 0.2s;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .bet-btn:hover {
+        background: var(--blood-red);
+        color: white;
+        box-shadow: 0 0 15px var(--neon-red);
+    }
+
+    .controls {
+        margin-top: 20px;
+    }
+
+    .main-btn {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.3s;
+        border: none;
+    }
+
+    #start-script {
+        background: linear-gradient(45deg, #8b0000, #ff0000);
+        color: white;
+        box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+    }
+
+    #start-script:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5);
+    }
+
+    #stop-script {
+        background: #1a1a1a;
+        color: #8b0000;
+        border: 1px solid #300;
+    }
+
+    #stop-script:hover {
+        background: #300;
+        color: white;
+    }
+
+    /* --- Footer Styles --- */
+    .footer {
+        margin-top: auto;
+        padding: 20px;
+        text-align: center;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        border-top: 1px solid var(--blood-red);
+    }
+
+    .footer p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #666;
+        letter-spacing: 1px;
+    }
+
+    .footer .name {
+        color: var(--neon-red);
+        font-weight: bold;
+        text-transform: uppercase;
+        font-family: 'Orbitron', sans-serif;
+        display: block;
+        margin-top: 5px;
+        text-shadow: 0 0 5px var(--blood-red);
+    }
+
+    @media (max-width: 480px) {
+        .container { padding: 15px; }
+        h1 { font-size: 1.2rem; }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>FreeBitcoinGame</h1>
+        
+        <div class="dashboard">
+            <div class="stat">
+                <span>WALLET BALANCE</span>
+                <div><b id="balance">0.00050000</b> <small style="color:var(--neon-red)">BTC</small></div>
+            </div>
+            <div class="stat">
+                <span>STAKE AMT</span>
+                <input type="text" id="double_your_btc_stake" value="0.00000001" readonly>
+            </div>
+        </div>
+
+        <div id="status-display" class="status-box">SYSTEM STANDBY...</div>
+
+        <div class="actions">
+            <button id="double_your_btc_bet_hi_button" class="bet-btn">HIGH</button>
+            <button id="double_your_btc_bet_lo_button" class="bet-btn">LOW</button>
+        </div>
+
+        <div class="controls">
+            <button id="start-script" class="main-btn">EXECUTE SCRIPT</button>
+            <button id="stop-script" class="main-btn">TERMINATE</button>
+        </div>
+
+        <div id="double_your_btc_bet_win" style="display:none"></div>
+        <div id="double_your_btc_bet_lose" style="display:none"></div>
+    </div>
+
+    <footer class="footer">
+        <p>DEVELOPED BY</p>
+        <span class="name">Humayun Shariar Himu</span>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    // Logic code is identical to your provided script
+    var startValue = '0.00000001',
+        profit = 8,
+        errorsToDouble = 4,
+        resetAfterDouble = 1,
+        foldsBeforeReset = 25,
+        stopPercentage = 0.001,
+        maxWait = 777,
+        stopped = false,
+        counter = 1;
+
+    var $loButton = $('#double_your_btc_bet_lo_button'),
+        $hiButton = $('#double_your_btc_bet_hi_button');
+
+    function gameEngine(type) {
+        if (stopped) return;
+        let win = Math.random() > 0.52; 
+        let currentStake = parseFloat($('#double_your_btc_stake').val());
+        let balance = parseFloat($('#balance').text());
+
+        if (win) {
+            $('#balance').text((balance + (currentStake * 2)).toFixed(8));
+            $('#status-display').text('>> Winning SUCCESS').css({'color': '#00ff41', 'border-color': '#00ff41'});
+            $('#double_your_btc_bet_win').html('win').trigger('DOMSubtreeModified');
+        } else {
+            $('#balance').text((balance - currentStake).toFixed(8));
+            $('#status-display').text('>> LOSS DETECTED').css({'color': '#ff0000', 'border-color': '#ff0000'});
+            $('#double_your_btc_bet_lose').html('lose').trigger('DOMSubtreeModified');
+        }
+    }
+
+    function counterPlus() { counter = (counter + 1); }
+    function multiply() {
+        if (counter < errorsToDouble) { counterPlus(); } 
+        else if (counter === errorsToDouble) {
+            counterPlus();
+            var current = $('#double_your_btc_stake').val();
+            var multiplyVal = (current * profit).toFixed(8);
+            $('#double_your_btc_stake').val(multiplyVal);
+        } else if (resetAfterDouble === 1 && counter === foldsBeforeReset + 3) {
+            counter = 1;
+            $('#double_your_btc_stake').val(parseFloat(startValue).toFixed(8));
+        } else {
+            counterPlus();
+            var current = $('#double_your_btc_stake').val();
+            var multiplyVal = (current * 2).toFixed(8);
+            $('#double_your_btc_stake').val(multiplyVal);
+        }
+    }
+
+    function getRandomWait() { return Math.floor(Math.random() * maxWait) + 200; }
+    function reset() { $('#double_your_btc_stake').val(parseFloat(startValue).toFixed(8)); }
+
+    $('#double_your_btc_bet_lose').on("DOMSubtreeModified", function() {
+        if ($(this).is(':contains("lose")')) {
+            $(this).html(''); 
+            multiply();
+            if(!stopped) setTimeout(() => { (Math.random() > 0.5) ? $loButton.trigger('click') : $hiButton.trigger('click'); }, getRandomWait());
+        }
+    });
+
+    $('#double_your_btc_bet_win').on("DOMSubtreeModified", function() {
+        if ($(this).is(':contains("win")')) {
+            $(this).html('');
+            counter = 1;
+            reset();
+            if(!stopped) setTimeout(() => { (Math.random() > 0.5) ? $hiButton.trigger('click') : $loButton.trigger('click'); }, getRandomWait());
+        }
+    });
+
+    $loButton.click(() => gameEngine('lo'));
+    $hiButton.click(() => gameEngine('hi'));
+    $('#start-script').click(function() {
+        stopped = false; reset();
+        $('#status-display').text('INITIALIZING...').css('color', '#00ff41');
+        setTimeout(() => $loButton.trigger('click'), 500);
+    });
+    $('#stop-script').click(function() {
+        stopped = true;
+        $('#status-display').text('EMERGENCY STOP').css('color', 'yellow');
+    });
+    </script>
+</body>
+</html>
